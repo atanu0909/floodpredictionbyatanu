@@ -1,12 +1,10 @@
-import flask
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from flask_mysqldb import MySQL
-
 import pickle
 import base64
+import joblib
 from training import prediction
 import requests
-app = flask.Flask(__name__)
+app = Flask(__name__)
 
 data = [{'name':'Delhi', "sel": "selected"}, {'name':'Mumbai', "sel": ""}, {'name':'Kolkata', "sel": ""}, {'name':'Bangalore', "sel": ""}, {'name':'Chennai', "sel": ""}]
 # data = [{'name':'India', "sel": ""}]
@@ -14,20 +12,11 @@ months = [{"name":"May", "sel": ""}, {"name":"June", "sel": ""}, {"name":"July",
 cities = [{'name':'Delhi', "sel": "selected"}, {'name':'Mumbai', "sel": ""}, {'name':'Kolkata', "sel": ""}, {'name':'Bangalore', "sel": ""}, {'name':'Chennai', "sel": ""}, {'name':'New York', "sel": ""}, {'name':'Los Angeles', "sel": ""}, {'name':'London', "sel": ""}, {'name':'Paris', "sel": ""}, {'name':'Sydney', "sel": ""}, {'name':'Beijing', "sel": ""}]
 
 model = pickle.load(open("model.pickle", 'rb'))
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'bhavya'
-app.config['MYSQL_DB'] = 'floodcare'
-
-mysql = MySQL(app)
-
 @app.route("/")
 @app.route('/index.html')
 def index() -> str:
-    cur = mysql.connection.cursor()
-    
     """Base page."""
-    return flask.render_template("index.html")
+    return render_template("index.html")
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -36,15 +25,10 @@ def register():
         email = request.form.get('email')
         subject = request.form.get('subject')
 
-        cursor = mysql.connection.cursor()
-        query = "INSERT INTO volunteer (name, email, subject) VALUES (%s, %s, %s)"
-        cursor.execute(query, (name, email, subject))
-        mysql.connection.commit()
-
-        # Set a variable to indicate registration success
+        # For now, just acknowledge the registration without saving to DB
         registration_success = True
         
-        return flask.render_template("index.html", registration_success=registration_success)
+        return render_template("index.html", registration_success=registration_success)
 
 
 

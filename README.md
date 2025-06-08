@@ -1,5 +1,7 @@
 # FloodML
 
+Developed by Atanu Ghosh (June 2025)
+
 FloodML is a web application that leverages **Machine Learning** to predict floods based on weather and historical data.
 
 ## Overview
